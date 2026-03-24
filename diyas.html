@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ДіяS — Держава і я, Скальденхеймець</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f3;
+      --bg-tertiary: #eeede8;
+      --text-primary: #1a1a1a;
+      --text-secondary: #6b6b68;
+      --border: rgba(0,0,0,0.12);
+      --border-hover: rgba(0,0,0,0.25);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --brand: #1A3A6B;
+      --brand-accent: #5BB8F5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1e1e1c;
+        --bg-secondary: #2a2a28;
+        --bg-tertiary: #323230;
+        --text-primary: #f0efe8;
+        --text-secondary: #9a9994;
+        --border: rgba(255,255,255,0.12);
+        --border-hover: rgba(255,255,255,0.28);
+      }
+    }
+    html, body { height: 100%; background: var(--bg-tertiary); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text-primary); }
+
+    .app-shell { max-width: 420px; margin: 0 auto; min-height: 100vh; background: var(--bg-tertiary); display: flex; flex-direction: column; position: relative; }
+
+    /* HEADER */
+    .header { background: var(--brand); color: white; padding: 1rem 1.25rem 0; border-radius: 0 0 var(--radius-xl) var(--radius-xl); flex-shrink: 0; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .logo { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
+    .logo span { color: var(--brand-accent); }
+    .notif-btn { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.15); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; transition: background 0.2s; }
+    .notif-btn:hover { background: rgba(255,255,255,0.25); }
+    .user-greeting { font-size: 13px; opacity: 0.7; margin-bottom: 2px; }
+    .user-name { font-size: 17px; font-weight: 500; margin-bottom: 1rem; }
+    .tabs { display: flex; gap: 4px; }
+    .tab { flex: 1; text-align: center; padding: 8px 4px; font-size: 12px; color: rgba(255,255,255,0.55); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; user-select: none; }
+    .tab.active { color: white; border-bottom-color: var(--brand-accent); }
+
+    /* CONTENT */
+    .content { padding: 1rem; flex: 1; display: none; }
+    .content.active { display: block; }
+    .section-label { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 8px; margin-top: 1.25rem; }
+    .section-label:first-child { margin-top: 0; }
+
+    /* DOC CARDS */
+    .doc-card { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.2s, transform 0.15s; }
+    .doc-card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+    .doc-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .doc-icon.blue { background: #E6F1FB; }
+    .doc-icon.green { background: #EAF3DE; }
+    .doc-icon.amber { background: #FAEEDA; }
+    .doc-icon.purple { background: #EEEDFE; }
+    .doc-title { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+    .doc-sub { font-size: 12px; color: var(--text-secondary); }
+    .doc-arrow { margin-left: auto; color: var(--text-secondary); font-size: 18px; flex-shrink: 0; }
+    .share-badge { display: inline-block; font-size: 10px; background: #E6F1FB; color: #185FA5; padding: 2px 7px; border-radius: 20px; margin-left: 6px; font-weight: 500; }
+
+    /* SERVICE GRID */
+    .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .service-card { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; cursor: pointer; transition: border-color 0.2s, transform 0.15s; }
+    .service-card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+    .service-icon { font-size: 24px; margin-bottom: 8px; }
+    .service-title { font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+    .service-sub { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+    .skald-btn { display: block; width: 100%; background: var(--brand); color: white; border: none; border-radius: var(--radius-lg); padding: 13px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 1rem; letter-spacing: 0.2px; transition: opacity 0.2s; }
+    .skald-btn:hover { opacity: 0.88; }
+
+    /* REFERENDUMS */
+    .vote-card { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; margin-bottom: 10px; }
+    .vote-title { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+    .vote-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.55; }
+    .vote-btns { display: flex; gap: 8px; }
+    .vote-btn { flex: 1; padding: 9px; border-radius: var(--radius-md); border: 0.5px solid var(--border); font-size: 13px; cursor: pointer; font-weight: 500; transition: all 0.2s; background: var(--bg-secondary); color: var(--text-primary); }
+    .vote-btn.yes:hover { background: #EAF3DE; color: #3B6D11; border-color: #97C459; }
+    .vote-btn.no:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+    .vote-btn:disabled { cursor: default; }
+    .voted-yes { background: #EAF3DE !important; color: #3B6D11 !important; border-color: #97C459 !important; }
+    .voted-no { background: #FCEBEB !important; color: #A32D2D !important; border-color: #F09595 !important; }
+    .vote-deadline { font-size: 11px; color: var(--text-secondary); margin-top: 8px; }
+
+    /* PROFILE */
+    .profile-card { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+    .avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--brand); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 500; flex-shrink: 0; }
+    .profile-name { font-size: 16px; font-weight: 500; margin-bottom: 2px; }
+    .profile-sub { font-size: 12px; color: var(--text-secondary); }
+    .id-badge { display: inline-block; background: #E6F1FB; color: #185FA5; font-size: 11px; padding: 3px 9px; border-radius: 20px; margin-top: 5px; font-weight: 500; }
+    .info-row { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; }
+    .info-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 1rem; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+    .info-item:last-child { border-bottom: none; }
+    .info-label { color: var(--text-secondary); }
+    .info-val { font-weight: 500; }
+
+    /* BOTTOM NAV */
+    .bottom-nav { background: var(--bg-primary); border-top: 0.5px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 env(safe-area-inset-bottom, 8px); flex-shrink: 0; position: sticky; bottom: 0; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--text-secondary); cursor: pointer; min-width: 60px; padding: 4px; user-select: none; transition: color 0.2s; }
+    .nav-item.active { color: var(--brand); }
+    .nav-icon { font-size: 20px; }
+
+    /* MODAL OVERLAY */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.48); display: flex; align-items: flex-end; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-sheet { background: var(--bg-primary); border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 1.5rem; width: 100%; max-width: 420px; transform: translateY(40px); transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1); }
+    .modal-overlay.open .modal-sheet { transform: translateY(0); }
+    .modal-handle { width: 36px; height: 4px; background: var(--border-hover); border-radius: 2px; margin: 0 auto 1.25rem; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .modal-title { font-size: 16px; font-weight: 500; }
+    .modal-close { background: var(--bg-secondary); border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .modal-close:hover { background: var(--border); }
+
+    /* DIGITAL CARD */
+    .dig-card { border-radius: 12px; padding: 1.25rem; color: white; margin-bottom: 1rem; }
+    .dig-card.blue-grad { background: linear-gradient(135deg, #1A3A6B 0%, #2a5298 100%); }
+    .dig-card.green-grad { background: linear-gradient(135deg, #0F6E56 0%, #1D9E75 100%); }
+    .dig-card.amber-grad { background: linear-gradient(135deg, #854F0B 0%, #BA7517 100%); }
+    .dig-card-country { font-size: 11px; opacity: 0.65; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .dig-card-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .dig-card-dob { font-size: 13px; opacity: 0.8; margin-bottom: 16px; }
+    .dig-card-row { display: flex; gap: 24px; }
+    .dig-card-field label { font-size: 10px; opacity: 0.6; display: block; margin-bottom: 2px; }
+    .dig-card-field span { font-size: 13px; font-weight: 500; }
+    .share-btn { width: 100%; background: var(--bg-secondary); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 11px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-primary); transition: background 0.2s; }
+    .share-btn:hover { background: var(--bg-tertiary); }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 300; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">ДіяS<span>●</span></div>
+      <button class="notif-btn" onclick="showToast('Сповіщень немає')">🔔</button>
+    </div>
+    <div class="user-greeting">Вітаємо,</div>
+    <div class="user-name">Валерій Скальденський</div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('docs',this)">Документи</div>
+      <div class="tab" onclick="switchTab('services',this)">Послуги</div>
+      <div class="tab" onclick="switchTab('referendums',this)">Референдуми</div>
+    </div>
+  </div>
+
+  <!-- TAB: DOCUMENTS -->
+  <div class="content active" id="tab-docs">
+    <div class="section-label">Мої документи</div>
+    <div class="doc-card" onclick="openDoc('id')">
+      <div class="doc-icon blue">🪪</div>
+      <div>
+        <div class="doc-title">ID-картка <span class="share-badge">Поділитись</span></div>
+        <div class="doc-sub">ВА 123456 · дійсна до 2031</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+    <div class="doc-card" onclick="openDoc('passport')">
+      <div class="doc-icon blue">📘</div>
+      <div>
+        <div class="doc-title">Закордонний паспорт <span class="share-badge">Поділитись</span></div>
+        <div class="doc-sub">SK 987654 · дійсний до 2029</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+    <div class="doc-card" onclick="openDoc('tax')">
+      <div class="doc-icon amber">📋</div>
+      <div>
+        <div class="doc-title">ПІН (ІПН)</div>
+        <div class="doc-sub">3145 678 901</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+    <div class="section-label">Свідоцтва</div>
+    <div class="doc-card" onclick="openDoc('birth')">
+      <div class="doc-icon green">👶</div>
+      <div>
+        <div class="doc-title">Свідоцтво про народження</div>
+        <div class="doc-sub">SKL-2001-004832</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+    <div class="doc-card" onclick="openDoc('edu')">
+      <div class="doc-icon purple">🎓</div>
+      <div>
+        <div class="doc-title">Диплом про освіту</div>
+        <div class="doc-sub">Скальденхеймський держ. ун-т</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+    <div class="doc-card" onclick="openDoc('insurance')">
+      <div class="doc-icon green">🏥</div>
+      <div>
+        <div class="doc-title">Медичний поліс</div>
+        <div class="doc-sub">СКМ-2024-007612 · дійсний до 2025</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+  </div>
+
+  <!-- TAB: SERVICES -->
+  <div class="content" id="tab-services">
+    <div class="section-label">Популярні послуги</div>
+    <div class="services-grid">
+      <div class="service-card" onclick="showToast('Відкрито: Довідки онлайн')">
+        <div class="service-icon">📄</div>
+        <div class="service-title">Довідки онлайн</div>
+        <div class="service-sub">Замовте будь-яку довідку</div>
+      </div>
+      <div class="service-card" onclick="showToast('Відкрито: Мій податок')">
+        <div class="service-icon">💰</div>
+        <div class="service-title">Мій податок</div>
+        <div class="service-sub">Перегляд та сплата</div>
+      </div>
+      <div class="service-card" onclick="showToast('Відкрито: Заява на шлюб')">
+        <div class="service-icon">💍</div>
+        <div class="service-title">Заява на шлюб</div>
+        <div class="service-sub">Реєстрація через застосунок</div>
+      </div>
+      <div class="service-card" onclick="showToast('Відкрито: єРозвиток')">
+        <div class="service-icon">🌱</div>
+        <div class="service-title">єРозвиток</div>
+        <div class="service-sub">Гранти та субсидії</div>
+      </div>
+      <div class="service-card" onclick="showToast('Відкрито: Реєстрація авто')">
+        <div class="service-icon">🚗</div>
+        <div class="service-title">Авто</div>
+        <div class="service-sub">Реєстрація та штрафи</div>
+      </div>
+      <div class="service-card" onclick="showToast('Відкрито: Комунальні послуги')">
+        <div class="service-icon">🏠</div>
+        <div class="service-title">Комунальні</div>
+        <div class="service-sub">Рахунки та субсидії</div>
+      </div>
+    </div>
+    <div class="section-label">Авторизація</div>
+    <div class="doc-card" onclick="showToast('SkaldID активний')">
+      <div class="doc-icon blue">🔑</div>
+      <div>
+        <div class="doc-title">SkaldID</div>
+        <div class="doc-sub">Ваш єдиний вхід у держпослуги</div>
+      </div>
+      <div class="doc-arrow">›</div>
+    </div>
+    <button class="skald-btn" onclick="showToast('Авторизація через SkaldID...')">Увійти через SkaldID</button>
+  </div>
+
+  <!-- TAB: REFERENDUMS -->
+  <div class="content" id="tab-referendums">
+    <div class="section-label">Активні голосування</div>
+
+    <div class="vote-card">
+      <div class="vote-title">Перехід на 4-денний робочий тиждень</div>
+      <div class="vote-desc">Ухвалення закону про скорочення стандартного робочого тижня з 5 до 4 днів без зменшення заробітної плати.</div>
+      <div class="vote-btns">
+        <button class="vote-btn yes" id="v1y" onclick="vote(1,'yes')">✓ За</button>
+        <button class="vote-btn no" id="v1n" onclick="vote(1,'no')">✕ Проти</button>
+      </div>
+      <div class="vote-deadline">⏱ Закінчується: 15 квітня 2026</div>
+    </div>
+
+    <div class="vote-card">
+      <div class="vote-title">Розширення парку відновлюваної енергетики</div>
+      <div class="vote-desc">Будівництво нових сонячних і вітрових станцій для досягнення 80% частки «зеленої» енергії до 2035 року.</div>
+      <div class="vote-btns">
+        <button class="vote-btn yes" id="v2y" onclick="vote(2,'yes')">✓ За</button>
+        <button class="vote-btn no" id="v2n" onclick="vote(2,'no')">✕ Проти</button>
+      </div>
+      <div class="vote-deadline">⏱ Закінчується: 30 квітня 2026</div>
+    </div>
+
+    <div class="vote-card">
+      <div class="vote-title">Безоплатний проїзд для студентів</div>
+      <div class="vote-desc">Надання безкоштовного проїзду в громадському транспорті для всіх студентів денної форми навчання Скальденхейму.</div>
+      <div class="vote-btns">
+        <button class="vote-btn yes" id="v3y" onclick="vote(3,'yes')">✓ За</button>
+        <button class="vote-btn no" id="v3n" onclick="vote(3,'no')">✕ Проти</button>
+      </div>
+      <div class="vote-deadline">⏱ Закінчується: 10 травня 2026</div>
+    </div>
+  </div>
+
+  <!-- TAB: PROFILE -->
+  <div class="content" id="tab-profile">
+    <div class="profile-card">
+      <div class="avatar">ВС</div>
+      <div>
+        <div class="profile-name">Валерій Скальденський</div>
+        <div class="profile-sub">Громадянин Скальденхейму</div>
+        <div class="id-badge">SkaldID: SKL-1990-VS</div>
+      </div>
+    </div>
+    <div class="section-label">Особисті дані</div>
+    <div class="info-row">
+      <div class="info-item"><span class="info-label">Дата народження</span><span class="info-val">14.03.1990</span></div>
+      <div class="info-item"><span class="info-label">Місце реєстрації</span><span class="info-val">м. Скальденхейм</span></div>
+      <div class="info-item"><span class="info-label">ІПН</span><span class="info-val">3145 678 901</span></div>
+      <div class="info-item"><span class="info-label">Документів</span><span class="info-val">6</span></div>
+    </div>
+    <div class="section-label">Безпека</div>
+    <div class="info-row">
+      <div class="info-item"><span class="info-label">SkaldID</span><span class="info-val" style="color:#185FA5;">Активний ✓</span></div>
+      <div class="info-item"><span class="info-label">Двофакторна авт.</span><span class="info-val" style="color:#3B6D11;">Увімкнено ✓</span></div>
+      <div class="info-item"><span class="info-label">Тех. підтримка</span><span class="info-val">0 800 500 123</span></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-docs" onclick="switchNav('docs',this)">
+      <div class="nav-icon">🗂️</div>Документи
+    </div>
+    <div class="nav-item" id="nav-services" onclick="switchNav('services',this)">
+      <div class="nav-icon">⚙️</div>Послуги
+    </div>
+    <div class="nav-item" id="nav-referendums" onclick="switchNav('referendums',this)">
+      <div class="nav-icon">🗳️</div>Голосування
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="switchNav('profile',this)">
+      <div class="nav-icon">👤</div>Профіль
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENT MODAL -->
+<div class="modal-overlay" id="docModal" onclick="handleOverlayClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle"></span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const docData = {
+    id: {
+      title: 'ID-картка Скальденхейму',
+      html: `<div class="dig-card blue-grad">
+        <div class="dig-card-country">РЕСПУБЛІКА СКАЛЬДЕНХЕЙМ · ID CARD</div>
+        <div class="dig-card-name">Скальденський Валерій</div>
+        <div class="dig-card-dob">Народився: 14 березня 1990</div>
+        <div class="dig-card-row">
+          <div class="dig-card-field"><label>Серія / Номер</label><span>ВА 123456</span></div>
+          <div class="dig-card-field"><label>Дійсна до</label><span>14.03.2031</span></div>
+        </div>
+      </div>
+      <button class="share-btn" onclick="showToast('Посилання скопійовано!')">📤 Поділитись копією</button>`
+    },
+    passport: {
+      title: 'Закордонний паспорт',
+      html: `<div class="dig-card green-grad">
+        <div class="dig-card-country">РЕСПУБЛІКА СКАЛЬДЕНХЕЙМ · PASSPORT</div>
+        <div class="dig-card-name">SKALDENSKY VALERIY</div>
+        <div class="dig-card-dob">DOB: 14.03.1990 · Громадянство: SKL</div>
+        <div class="dig-card-row">
+          <div class="dig-card-field"><label>Номер</label><span>SK 987654</span></div>
+          <div class="dig-card-field"><label>Expires</label><span>14.03.2029</span></div>
+        </div>
+      </div>
+      <button class="share-btn" onclick="showToast('Посилання скопійовано!')">📤 Поділитись копією</button>`
+    },
+    tax: {
+      title: 'Персональний ідентифікаційний номер',
+      html: `<div style="background:var(--bg-secondary);border-radius:12px;padding:1.5rem;text-align:center;margin-bottom:1rem;">
+        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;letter-spacing:0.5px;">ПІН / ІПН</div>
+        <div style="font-size:34px;font-weight:600;letter-spacing:5px;color:var(--text-primary);">3145 678 901</div>
+      </div>
+      <button class="share-btn" onclick="showToast('ІПН скопійовано!')">📋 Скопіювати номер</button>`
+    },
+    birth: {
+      title: 'Свідоцтво про народження',
+      html: `<div style="border:0.5px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:14px;letter-spacing:0.4px;">РЕСПУБЛІКА СКАЛЬДЕНХЕЙМ · Мінцифри</div>
+        <div style="display:grid;gap:10px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Прізвище та ім'я</span><span style="font-weight:500;">Скальденський Валерій</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Дата народження</span><span>14 березня 1990</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Місце народження</span><span>м. Скальденхейм</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Реєстраційний №</span><span>SKL-2001-004832</span></div>
+        </div>
+      </div>`
+    },
+    edu: {
+      title: 'Диплом про вищу освіту',
+      html: `<div style="border:0.5px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
+        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:14px;">Скальденхеймський державний університет</div>
+        <div style="display:grid;gap:10px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Спеціальність</span><span style="font-weight:500;">Комп'ютерні науки</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Ступінь</span><span>Магістр</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Рік видачі</span><span>2013</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Серія / №</span><span>СК-М 047821</span></div>
+        </div>
+      </div>`
+    },
+    insurance: {
+      title: 'Медичний страховий поліс',
+      html: `<div class="dig-card amber-grad">
+        <div class="dig-card-country">РЕСПУБЛІКА СКАЛЬДЕНХЕЙМ · МЕДИЧНЕ СТРАХУВАННЯ</div>
+        <div class="dig-card-name">Скальденський Валерій</div>
+        <div class="dig-card-dob">Страховик: СкальдМедСтрах</div>
+        <div class="dig-card-row">
+          <div class="dig-card-field"><label>Номер поліса</label><span>СКМ-2024-007612</span></div>
+          <div class="dig-card-field"><label>Дійсний до</label><span>31.12.2025</span></div>
+        </div>
+      </div>
+      <button class="share-btn" onclick="showToast('Поліс скопійовано!')">📤 Поділитись полісом</button>`
+    }
+  };
+
+  function switchTab(name, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  function switchNav(name, el) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    const tabMap = { docs: 0, services: 1, referendums: 2 };
+    if (name in tabMap) {
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === tabMap[name]));
+    } else {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    }
+  }
+
+  function openDoc(id) {
+    const d = docData[id];
+    document.getElementById('modalTitle').textContent = d.title;
+    document.getElementById('modalBody').innerHTML = d.html;
+    document.getElementById('docModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('docModal').classList.remove('open');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('docModal')) closeModal();
+  }
+
+  const voted = {};
+  function vote(id, choice) {
+    if (voted[id]) return;
+    voted[id] = choice;
+    const y = document.getElementById('v' + id + 'y');
+    const n = document.getElementById('v' + id + 'n');
+    y.disabled = true; n.disabled = true;
+    if (choice === 'yes') {
+      y.className = 'vote-btn voted-yes'; y.textContent = '✓ Ви проголосували «За»';
+      n.className = 'vote-btn'; n.style.opacity = '0.45';
+    } else {
+      n.className = 'vote-btn voted-no'; n.textContent = '✕ Ви проголосували «Проти»';
+      y.className = 'vote-btn'; y.style.opacity = '0.45';
+    }
+    showToast('Ваш голос зараховано!');
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+</script>
+</body>
+</html>
